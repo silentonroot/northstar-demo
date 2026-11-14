@@ -1,0 +1,15 @@
+node_modules/
+coverage/
+
+# Local database and anything else written at runtime.
+var/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Local configuration. Never commit this.
+.env
+.env.*
+!.env.example
+
+.DS_Store

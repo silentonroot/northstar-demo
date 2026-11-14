@@ -1,0 +1,39 @@
+{
+  "name": "northstar-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Northstar Orders: a small order-management web app with synthetic data",
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "tsx --env-file-if-exists=.env server/main.ts",
+    "dev": "tsx watch --env-file-if-exists=.env server/main.ts",
+    "seed": "tsx --env-file-if-exists=.env seed/seed.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "corepack pnpm run lint && corepack pnpm run format:check && corepack pnpm run typecheck && corepack pnpm run test"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/formbody": "^9.0.1",
+    "fastify": "^5.12.8",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "node-html-parser": "^9.0.7",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^5.1.0"
+  }
+}

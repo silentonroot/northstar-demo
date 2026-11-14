@@ -1,0 +1,68 @@
+name: CI
+
+# Northstar is a synthetic demo application. Its checks are small: lint, format, typecheck,
+# tests, and a container build that must come up healthy.
+#
+# STATUS: not yet run on a hosting service. The same commands pass on a developer machine.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+
+jobs:
+  verify:
+    name: Lint, typecheck, test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Lint, format check, typecheck and test
+        run: pnpm run check
+
+  container:
+    name: Container build and health
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build, start, seed and check
+        # The seed prints freshly generated passwords for the two synthetic accounts. They
+        # are discarded here, and the container is removed at the end of the step.
+        run: |
+          trap 'docker compose down --volumes >/dev/null 2>&1 || true' EXIT
+          docker compose up --build --detach --wait
+          docker compose run --rm northstar node_modules/.bin/tsx seed/seed.ts >/dev/null
+          test "$(curl --silent --max-time 10 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:4100/healthz)" = 200
+          test "$(curl --silent --max-time 10 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:4100/login)" = 200
+          test "$(curl --silent --max-time 10 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:4100/orders)" = 302
