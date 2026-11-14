@@ -1,4 +1,7 @@
 # Dependency update proposals. Nothing is merged automatically.
+#
+# Major versions of the `node` image and of `@types/node` are ignored: the project targets Node 24,
+# and a move to a new Node line is deliberate (Node 25 broke the broker's image build).
 version: 2
 
 updates:
@@ -10,6 +13,9 @@ updates:
     cooldown:
       default-days: 5
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     commit-message:
       prefix: deps
 
@@ -26,5 +32,8 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major']
     commit-message:
       prefix: docker
