@@ -106,3 +106,7 @@ escaped.
 
 `pnpm test` runs vitest with `fastify.inject` against an in-memory database. Test users and their
 passwords exist only in `tests/helpers.ts`, and an injected clock replaces sleeping.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

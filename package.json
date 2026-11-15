@@ -1,5 +1,6 @@
 {
   "name": "northstar-demo",
+  "license": "MIT",
   "version": "0.1.0",
   "private": true,
   "description": "Northstar Orders: a small order-management web app with synthetic data",
